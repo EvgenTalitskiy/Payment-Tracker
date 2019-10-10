@@ -79,6 +79,7 @@ public class Handler
 	{
 		String currency = _data.substring(0, 3).toUpperCase();
 		String amountStr = _data.substring(4);
+		amountStr = amountStr.replace(",", ".");
 		double amount = Double.valueOf(amountStr);
 		
 		return new Object[]{currency, amount};
