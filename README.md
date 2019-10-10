@@ -13,6 +13,7 @@ Description of the task you can find [here][task descr].
 ### Requirements
 
 This project uses Maven to build and manage dependencies.
+
 To use the currency converter you need an internet connection.
 
 Make sure the following dependencies are installed:
@@ -23,16 +24,19 @@ Make sure the following dependencies are installed:
 ### Launch program
 
 To start the program you need to use the command line to go to the program directory and execute the command:
+
 ```
 java -cp bin Launcher
 ```
+
 You can specify a file name as a parameter. The format of the file should consist of one or more lines with the amount of the currency code, as in the example in the task.
 
 For example, the Launch.bat file is attached to the project. You can experience it on startup on Windows.
 
 ### Using
 
-После запуска вы можете вводить любой трехбуквенный код валюты и через пробел сумму данной проводки.
+After starting, you can enter any three-letter currency code and, after a space, the amount of this transaction.
+
 Example:
 ```
 EUR 4586.22
