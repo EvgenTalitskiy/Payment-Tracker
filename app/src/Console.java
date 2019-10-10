@@ -74,6 +74,6 @@ public class Console
 
 	public void close() 
 	{
-		threadConsoleUpdate.interrupt(); // TODO why not?
+		threadConsoleUpdate.interrupt();
 	}
 }
