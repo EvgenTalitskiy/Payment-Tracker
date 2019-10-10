@@ -21,9 +21,19 @@ Make sure the following dependencies are installed:
 *   [Java][java]
 *   [Maven][maven]
 
+### Build 
+
+To build the program you need to use the command line to go to the program directory and execute the command:
+
+```
+javac -d bin -cp src src/Launcher.java
+```
+
+Note: For convenience, write the path to the bin folder of the JDK package in Path.
+
 ### Launch program
 
-To start the program you need to use the command line to go to the program directory and execute the command:
+To run the program on the command line, run the command:
 
 ```
 java -cp bin Launcher
