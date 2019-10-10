@@ -51,6 +51,9 @@ Once a minute, a conclusion is displayed indicating the net amount of each curre
 
 Information on the current exchange rate was obtained from the portal: [CBR.ru][cbr].
 
+### Bugs
+
+The error could not be fixed, due to which the information entered by the user during the screen update was erased, but the input buffer was not cleared.
 
 [task descr]: https://bscideas-my.sharepoint.com/:w:/g/personal/astafyev_bscpraha_cz/EXTNsDv-5z5AhL3FRXnQn2YBMNrTzjwFtGej6H1yPtstZw?rtime=kGeTIvQ_10g
 [java]: https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
