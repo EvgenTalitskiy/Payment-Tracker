@@ -6,7 +6,7 @@ public class Console
 {
 	private boolean updateScreen = false;
 	private long lastUpdateTime = 0;
-	private int screenUpdateRate = 60*1000; 
+	private int screenUpdateRate = 5*1000; 
 	private List<String> buffer = new ArrayList<>();
 	Thread threadConsoleUpdate;
 	
@@ -42,6 +42,12 @@ public class Console
 					if ((System.currentTimeMillis() - lastUpdateTime) > screenUpdateRate)
 					{
 						updateScreen = true;
+					}
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e1) 
+					{
+						e1.printStackTrace();
 					}
 					if (updateScreen)
 					{

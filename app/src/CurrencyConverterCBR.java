@@ -1,40 +1,56 @@
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser; 
+import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-public class CurrencyConverterCBR implements CurrencyConverter
-{
-	private static ArrayList<ExchRate> exchRates = new ArrayList<>();
-    public float convert(String from, String to) throws IOException, ParserConfigurationException, SAXException
-    {
+/**
+ * Конвертер валют на основании данных полученых с сервиса ЦБРФ https://www.cbr.ru/
+ * Данные с сервиса предоставляются в виде курса рубля по отношению к какой-либо другой валюте
+ */
+public class CurrencyConverterCBR implements CurrencyConverter {
+    /**
+     * Список курсов обмена
+     */
+    private static ArrayList<ExchangeRate> exchangeRates = new ArrayList<>();
+
+    /**
+     * Метод определения курса перевода из одной валюты в другую
+     *
+     * @param from - валюта из
+     * @param to   - валюта в
+     * @return возвращает курс обмена валют. В случае если кода входящих валют равны вовзвращает 0
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     */
+    public float convert(String from, String to) throws IOException, ParserConfigurationException, SAXException {
+        if (from.equals(to)) {
+            return 0;
+        }
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser parser = factory.newSAXParser();
         XMLHandler xmlHandler = new XMLHandler();
         parser.parse("http://www.cbr.ru/scripts/XML_daily.asp", xmlHandler);
-        
+
         float valueFrom = from.equals("RUB") ? 1 : 0;
         float valueTo = to.equals("RUB") ? 1 : 0;
         float ret = 0;
-        
-        for (ExchRate exchRate : exchRates)
-        {
-        	if (exchRate.getCurrency().equals(from))
-        	{
-        		valueFrom = exchRate.getValue();
-        	}
-        	if (exchRate.getCurrency().equals(to))
-        	{
-        		valueTo = exchRate.getValue();
-        	}
-            if (valueFrom != 0 && valueTo != 0)
-            {
-            	ret = valueFrom/valueTo;
-            	break;
+
+        for (ExchangeRate exchangeRate : exchangeRates) {
+            if (exchangeRate.getCurrency().equals(from)) {
+                valueFrom = exchangeRate.getValue();
+            }
+            if (exchangeRate.getCurrency().equals(to)) {
+                valueTo = exchangeRate.getValue();
+            }
+            if (valueFrom != 0 && valueTo != 0) {
+                ret = valueFrom / valueTo;
+                break;
             }
         }
 
@@ -47,46 +63,47 @@ public class CurrencyConverterCBR implements CurrencyConverter
 //        float current = currencyConverter.convert("USD", "RUR");
 //        System.out.println(current);
 //    }
-    
-    private class XMLHandler extends DefaultHandler
-    {
-    	private String currency, lastElementName;
-    	private float nominal;
-    	private String value;
+
+    /**
+     * Класс разбора данных получаемых от сервиса в виде XML и сохранения в список курсов обмена
+     */
+    private static class XMLHandler extends DefaultHandler {
+        private String currency, lastElementName;
+        private float nominal;
+        private String value;
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        public void startElement(String uri, String localName, String qName, Attributes attributes) {
             lastElementName = qName;
         }
 
         @Override
-        public void characters(char[] ch, int start, int length) throws SAXException {
+        public void characters(char[] ch, int start, int length) {
             String information = new String(ch, start, length);
 
             information = information.replace("\n", "").trim();
 
             if (!information.isEmpty()) {
                 if (lastElementName.equals("CharCode"))
-                	currency = information;
+                    currency = information;
                 if (lastElementName.equals("Value"))
-                	value = information.replace(",", ".");
+                    value = information.replace(",", ".");
                 if (lastElementName.equals("Nominal"))
-                	nominal = Float.valueOf(information.replace(",", "."));
+                    nominal = Float.parseFloat(information.replace(",", "."));
             }
         }
-        
+
         @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
-            if ( (currency != null && !currency.isEmpty()) 
-            	&& (value != null && !value.isEmpty())
-            	&& (nominal != 0))
-        	{
-            	ExchRate exchRate = new ExchRate();
-            	exchRate.setRate(currency, Float.valueOf(value) / nominal);
-              	exchRates.add(exchRate);
-              	currency = null;
-              	value = null;
-              	nominal = 0;
+        public void endElement(String uri, String localName, String qName) {
+            if ((currency != null && !currency.isEmpty())
+                    && (value != null && !value.isEmpty())
+                    && (nominal != 0)) {
+                ExchangeRate exchangeRate = new ExchangeRate();
+                exchangeRate.setRate(currency, Float.parseFloat(value) / nominal);
+                exchangeRates.add(exchangeRate);
+                currency = null;
+                value = null;
+                nominal = 0;
             }
         }
     }
